@@ -23,7 +23,6 @@ public class SingleConnection {
 			if (connection == null) {
 				connection = DriverManager.getConnection(url, user, password);
 				connection.setAutoCommit(false);
-				System.out.println("Conexão bem sucedida!");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
