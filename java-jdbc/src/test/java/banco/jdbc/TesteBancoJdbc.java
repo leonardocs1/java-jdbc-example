@@ -5,7 +5,6 @@ import java.util.List;
 import org.junit.Test;
 
 import DAO.UserPosDAO;
-import conexao.jdbc.SingleConnection;
 import model.Userposjava;
 
 public class TesteBancoJdbc {
@@ -42,8 +41,23 @@ public class TesteBancoJdbc {
 		UserPosDAO dao = new UserPosDAO();
 		try {
 			Userposjava userposjava = new Userposjava();
-			userposjava = dao.buscar(6L);
+			userposjava = dao.buscar(5L);
 			System.out.println(userposjava);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void initAtualizar() {
+		try {
+			UserPosDAO dao = new UserPosDAO();
+			
+			Userposjava objetoBanco = dao.buscar(5L);
+			
+			objetoBanco.setNome("Nome mudado com método atualizar");
+			
+			dao.atualizar(objetoBanco);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
