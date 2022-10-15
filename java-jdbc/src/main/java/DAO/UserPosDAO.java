@@ -59,9 +59,9 @@ public class UserPosDAO {
 		}
 		return list;
 	}
-	
+
 	public void salvarTelefone(Telefone telefone) {
-		
+
 		try {
 			String sql = "INSERT INTO public.telefoneuser(numero, tipo, usuariopessoa)VALUES (?, ?, ?);";
 			PreparedStatement statement = connection.prepareStatement(sql);
@@ -98,20 +98,20 @@ public class UserPosDAO {
 		}
 		return retorno;
 	}
-	
-	public List<BeanUserFone> listaUserFone (Long idUser) {
-		
+
+	public List<BeanUserFone> listaUserFone(Long idUser) {
+
 		List<BeanUserFone> beanUserFones = new ArrayList<>();
-		
+
 		String sql = "select  nome, numero, email from telefoneuser as fone ";
-			sql += "inner join userposjava as userp ";
-			sql += "on fone.usuariopessoa = userp.id ";
-			sql += "where userp.id = " + idUser;
-		
+		sql += "inner join userposjava as userp ";
+		sql += "on fone.usuariopessoa = userp.id ";
+		sql += "where userp.id = " + idUser;
+
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			ResultSet resultSet = statement.executeQuery();
-			
+
 			while (resultSet.next()) {
 				BeanUserFone userFone = new BeanUserFone();
 				userFone.setNome(resultSet.getString("nome"));
@@ -119,11 +119,11 @@ public class UserPosDAO {
 				userFone.setEmail(resultSet.getString("email"));
 				beanUserFones.add(userFone);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return beanUserFones;
 	}
 
@@ -148,7 +148,7 @@ public class UserPosDAO {
 		}
 
 	}
-	
+
 	public void deletar(Long id) {
 		try {
 			String sql = "delete from userposjava where id = " + id;
@@ -164,6 +164,25 @@ public class UserPosDAO {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public void deleteFonesPorUser(Long idUser) {
+
+		String sqlFone = "delete from telefoneuser where usuariopessoa = " + idUser;
+		String sqlUser = "delete from userposjava where id = " + idUser;
+
+		try {
+
+			PreparedStatement statement = connection.prepareStatement(sqlFone);
+			statement.executeUpdate();
+			connection.commit();
+
+			statement = connection.prepareStatement(sqlUser);
+			statement.executeUpdate();
+			connection.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 }
