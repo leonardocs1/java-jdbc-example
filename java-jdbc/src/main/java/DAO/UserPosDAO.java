@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import conexao.jdbc.SingleConnection;
+import model.BeanUserFone;
+import model.Telefone;
 import model.Userposjava;
 
 public class UserPosDAO {
@@ -57,6 +59,26 @@ public class UserPosDAO {
 		}
 		return list;
 	}
+	
+	public void salvarTelefone(Telefone telefone) {
+		
+		try {
+			String sql = "INSERT INTO public.telefoneuser(numero, tipo, usuariopessoa)VALUES (?, ?, ?);";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, telefone.getNumero());
+			statement.setString(2, telefone.getTipo());
+			statement.setLong(3, telefone.getUsuario());
+			statement.execute();
+			connection.commit();
+		} catch (Exception e) {
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+	}
 
 	public Userposjava buscar(Long id) {
 		Userposjava retorno = new Userposjava();
@@ -75,6 +97,34 @@ public class UserPosDAO {
 			e.printStackTrace();
 		}
 		return retorno;
+	}
+	
+	public List<BeanUserFone> listaUserFone (Long idUser) {
+		
+		List<BeanUserFone> beanUserFones = new ArrayList<>();
+		
+		String sql = "select  nome, numero, email from telefoneuser as fone ";
+			sql += "inner join userposjava as userp ";
+			sql += "on fone.usuariopessoa = userp.id ";
+			sql += "where userp.id = " + idUser;
+		
+		try {
+			PreparedStatement statement = connection.prepareStatement(sql);
+			ResultSet resultSet = statement.executeQuery();
+			
+			while (resultSet.next()) {
+				BeanUserFone userFone = new BeanUserFone();
+				userFone.setNome(resultSet.getString("nome"));
+				userFone.setNumero(resultSet.getString("numero"));
+				userFone.setEmail(resultSet.getString("email"));
+				beanUserFones.add(userFone);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return beanUserFones;
 	}
 
 	public void atualizar(Userposjava userposjava) {
@@ -114,5 +164,6 @@ public class UserPosDAO {
 			e.printStackTrace();
 		}
 	}
+	
 
 }
